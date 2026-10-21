@@ -1,0 +1,6 @@
+# Hosted public service (no account or token required).
+[mcp_servers.thinkingmodels]
+url = "https://thinkingmodels.site/mcp"
+
+# For your own authenticated service, use its URL and uncomment:
+# bearer_token_env_var = "THINKINGMODELS_MCP_TOKEN"

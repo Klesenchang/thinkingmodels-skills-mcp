@@ -1,0 +1,43 @@
+{
+  "name": "thinkingmodels-skills-mcp",
+  "version": "1.0.0",
+  "description": "ThinkingModels offline Skills and read-only public knowledge MCP server",
+  "type": "module",
+  "private": true,
+  "license": "CC0-1.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Klesenchang/thinkingmodels-skills-mcp.git"
+  },
+  "homepage": "https://thinkingmodels.site/",
+  "bin": {
+    "thinkingmodels-mcp": "mcp/src/cli.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node mcp/src/cli.mjs",
+    "start:http": "node mcp/src/cli.mjs --transport http",
+    "build": "npm run build:skills",
+    "build:skills": "node skills/build.mjs",
+    "test": "node --test",
+    "check": "node scripts/check.mjs",
+    "verify": "npm run build && npm test && npm run check",
+    "smoke:remote": "node scripts/smoke-remote.mjs",
+    "release:checksums": "node scripts/release-checksums.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.1"
+  },
+  "files": [
+    "mcp/src/",
+    "skills/",
+    "scripts/install-skill.mjs",
+    "docs/",
+    "examples/",
+    "README.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ]
+}

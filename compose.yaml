@@ -1,0 +1,14 @@
+services:
+  mcp:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      THINKINGMODELS_API_BASE_URL: ${THINKINGMODELS_API_BASE_URL:-https://thinkingmodels.site}
+      THINKINGMODELS_TIMEOUT_MS: ${THINKINGMODELS_TIMEOUT_MS:-10000}
+      THINKINGMODELS_HTTP_HOST: 0.0.0.0
+      THINKINGMODELS_HTTP_PORT: 3000
+      THINKINGMODELS_MCP_TOKEN: ${THINKINGMODELS_MCP_TOKEN:?Set a random token in .env}
+      THINKINGMODELS_ALLOWED_HOSTS: ${THINKINGMODELS_ALLOWED_HOSTS:-localhost,127.0.0.1,mcp.example.com}
+      THINKINGMODELS_ALLOWED_ORIGINS: ${THINKINGMODELS_ALLOWED_ORIGINS:-https://mcp.example.com}

@@ -1,0 +1,8 @@
+interface:
+  display_name: "认知脚手架 · 学习与复盘"
+  short_description: "用具体行动与反馈检验模型适用性，把复盘转化为下一次可检验的行动"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  default_prompt: "使用 $thinkingmodels-learning-reflection 把这个模型用于我的具体案例，区分当时信息和后来反馈，并给出下一次练习。"
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "thinkingmodels": {
+      "command": "/ABSOLUTE/PATH/TO/node",
+      "args": ["/ABSOLUTE/PATH/TO/thinkingmodels-skills-mcp/mcp/src/cli.mjs", "--transport", "stdio"],
+      "env": {
+        "THINKINGMODELS_API_BASE_URL": "https://thinkingmodels.site",
+        "THINKINGMODELS_TIMEOUT_MS": "10000"
+      }
+    }
+  }
+}

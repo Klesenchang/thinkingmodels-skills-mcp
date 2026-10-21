@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "thinkingmodels": {
+      "command": "npx",
+      "args": ["--yes", "--package=github:Klesenchang/thinkingmodels-skills-mcp#v1.0.0", "thinkingmodels-mcp", "--transport", "stdio"],
+      "env": { "THINKINGMODELS_API_BASE_URL": "https://thinkingmodels.site" }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+[mcp_servers.thinkingmodels]
+command = "npx"
+args = ["--yes", "--package=github:Klesenchang/thinkingmodels-skills-mcp#v1.0.0", "thinkingmodels-mcp", "--transport", "stdio"]
+startup_timeout_sec = 120
+tool_timeout_sec = 30
+
+[mcp_servers.thinkingmodels.env]
+THINKINGMODELS_API_BASE_URL = "https://thinkingmodels.site"

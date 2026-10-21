@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "publisher": "ThinkingModels",
+  "homepage": "https://thinkingmodels.site/",
+  "hosts": [
+    "Codex",
+    "Claude Code"
+  ],
+  "packages": [
+    {
+      "slug": "thinkingmodels-problem-framing",
+      "name": {
+        "zh": "问题拆解",
+        "en": "Problem framing"
+      },
+      "description": {
+        "zh": "分清事实、假设与约束，把模糊困扰改写为一个可验证的问题，并确定最小的信息收集动作。",
+        "en": "Separate facts, assumptions, and constraints. Turn an unclear concern into a testable question and one small evidence-gathering step."
+      },
+      "tags": {
+        "zh": [
+          "问题澄清",
+          "思维模型"
+        ],
+        "en": [
+          "Problem framing",
+          "Mental models"
+        ]
+      },
+      "version": "1.0.1",
+      "license": "CC0-1.0",
+      "icon": "thinkingmodels-problem-framing/assets/icon.svg",
+      "zip": "dist/thinkingmodels-problem-framing-1.0.1.zip",
+      "skillhub": {
+        "id": "@indiv-klesen/thinkingmodels-problem-framing",
+        "status": "published",
+        "url": "https://skillhub.cn/skills/indiv-klesen/thinkingmodels-problem-framing",
+        "categories": [
+          "教育学习",
+          "学习辅导"
+        ],
+        "verifiedAt": "2026-10-19"
+      },
+      "sha256": "d860bae582dd12eb5c2c836a3e726ab025a525a2daa32340e1bc915ba956b092",
+      "bytes": 9989
+    },
+    {
+      "slug": "thinkingmodels-decision-validation",
+      "name": {
+        "zh": "决策与验证",
+        "en": "Decisions & validation"
+      },
+      "description": {
+        "zh": "沿用你的判断标准比较方案，找出关键取舍与反例，为最不确定的假设设计一次有边界的验证。",
+        "en": "Compare options using your criteria, expose tradeoffs and counterexamples, and design a bounded test for the assumption that matters most."
+      },
+      "tags": {
+        "zh": [
+          "方案比较",
+          "假设验证"
+        ],
+        "en": [
+          "Decision support",
+          "Validation"
+        ]
+      },
+      "version": "1.0.1",
+      "license": "CC0-1.0",
+      "icon": "thinkingmodels-decision-validation/assets/icon.svg",
+      "zip": "dist/thinkingmodels-decision-validation-1.0.1.zip",
+      "skillhub": {
+        "id": "@indiv-klesen/thinkingmodels-decision-validation",
+        "status": "published",
+        "url": "https://skillhub.cn/skills/indiv-klesen/thinkingmodels-decision-validation",
+        "categories": [
+          "教育学习",
+          "学习辅导"
+        ],
+        "verifiedAt": "2026-10-19"
+      },
+      "sha256": "351e3ce9bb8eb5649646d08f45523f911d077d3b421449dc49756c3ad7b006a0",
+      "bytes": 10202
+    },
+    {
+      "slug": "thinkingmodels-learning-reflection",
+      "name": {
+        "zh": "学习与复盘",
+        "en": "Learning & reflection"
+      },
+      "description": {
+        "zh": "把模型放进真实案例，区分当时的信息与后来的反馈，检查适用边界，并形成下一次可检验的行动。",
+        "en": "Apply a model to a real case, separate what was known then from later feedback, check its limits, and define the next testable action."
+      },
+      "tags": {
+        "zh": [
+          "应用学习",
+          "行动复盘"
+        ],
+        "en": [
+          "Applied learning",
+          "Reflection"
+        ]
+      },
+      "version": "1.0.1",
+      "license": "CC0-1.0",
+      "icon": "thinkingmodels-learning-reflection/assets/icon.svg",
+      "zip": "dist/thinkingmodels-learning-reflection-1.0.1.zip",
+      "skillhub": {
+        "id": "@indiv-klesen/thinkingmodels-learning-reflection",
+        "status": "published",
+        "url": "https://skillhub.cn/skills/indiv-klesen/thinkingmodels-learning-reflection",
+        "categories": [
+          "教育学习",
+          "学习辅导",
+          "知识讲解"
+        ],
+        "verifiedAt": "2026-10-19"
+      },
+      "sha256": "34802ff4025434b34b6f7b5696b55b43e4571fcecb8fcec4b46daee5531944ce",
+      "bytes": 10086
+    }
+  ]
+}

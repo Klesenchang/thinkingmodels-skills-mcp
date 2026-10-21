@@ -1,0 +1,8 @@
+interface:
+  display_name: "认知脚手架 · 问题拆解"
+  short_description: "分清事实、假设与约束，把模糊困扰改写为可验证、可行动的问题"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  default_prompt: "使用 $thinkingmodels-problem-framing 帮我澄清这个问题，找出一个最小的信息收集动作。"
+policy:
+  allow_implicit_invocation: true

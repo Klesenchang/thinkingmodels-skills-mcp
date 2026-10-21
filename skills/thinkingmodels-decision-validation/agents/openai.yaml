@@ -1,0 +1,8 @@
+interface:
+  display_name: "认知脚手架 · 决策与验证"
+  short_description: "沿用你的标准比较选项，识别关键取舍，并设计一次有边界的验证"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  default_prompt: "使用 $thinkingmodels-decision-validation 比较我的选项，指出关键取舍，并设计一次最小验证。"
+policy:
+  allow_implicit_invocation: true
