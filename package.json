@@ -1,6 +1,6 @@
 {
   "name": "thinkingmodels-skills-mcp",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "ThinkingModels offline Skills and read-only public knowledge MCP server",
   "type": "module",
   "private": true,

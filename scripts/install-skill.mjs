@@ -8,6 +8,7 @@ export const skillSlugs = Object.freeze([
   'thinkingmodels-problem-framing',
   'thinkingmodels-decision-validation',
   'thinkingmodels-learning-reflection',
+  'thinkingmodels-rule-governance',
 ]);
 
 const repository = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -85,7 +86,8 @@ async function collectSource(path, prefix = '') {
 export async function installSkill(options, environment = process.env) {
   // Reuse CLI validation for callers of this exported function too.
   parseArguments(['--skill', options.skill, '--host', options.host, '--scope', options.scope, ...(options.project ? ['--project', options.project] : [])]);
-  const files = await collectSource(join(repository, 'skills', options.skill));
+  const files = (await collectSource(join(repository, 'skills', options.skill))).filter(([name]) =>
+    !(options.skill === 'thinkingmodels-rule-governance' && name === 'release.zip'));
   if (!files.some(([name]) => name === 'SKILL.md')) throw new Error('Source package has no SKILL.md.');
   const home = homedir();
   let selectedRoot;

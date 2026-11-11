@@ -118,6 +118,40 @@
       },
       "sha256": "34802ff4025434b34b6f7b5696b55b43e4571fcecb8fcec4b46daee5531944ce",
       "bytes": 10086
+    },
+    {
+      "slug": "thinkingmodels-rule-governance",
+      "name": {
+        "zh": "thinkingmodels 规则治理",
+        "en": "thinkingmodels Rule Governance"
+      },
+      "description": {
+        "zh": "将项目反馈和任务经验转化为可验收需求与有证据的候选规则，检查范围、权限、回归和恢复目标；提供流程指引，不自带自动化执行系统。",
+        "en": "Turn project feedback and task experience into testable requirements and evidence-backed candidate rules. Check scope, permissions, regressions, and recovery goals. Workflow guidance only; no automated execution system is included."
+      },
+      "tags": {
+        "zh": [
+          "需求评审",
+          "规则治理"
+        ],
+        "en": [
+          "Requirements review",
+          "Rule governance"
+        ]
+      },
+      "version": "0.1.0",
+      "license": "CC0-1.0",
+      "icon": null,
+      "zip": "dist/thinkingmodels-rule-governance-0.1.0.zip",
+      "distribution": "reviewed-archive",
+      "skillhub": {
+        "id": "@indiv-klesen/thinkingmodels-rule-governance",
+        "status": "published",
+        "url": "https://skillhub.cn/skills/indiv-klesen/thinkingmodels-rule-governance",
+        "verifiedAt": "2026-11-11"
+      },
+      "sha256": "830e2c8548623eb863a494637a01bea8cbb61481c9e265f48dd6d801f4e69199",
+      "bytes": 14401
     }
   ]
 }

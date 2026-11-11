@@ -53,7 +53,10 @@ for (const file of ['claude-desktop.local.json', 'claude-desktop.npx.json']) {
   assert(config.command && Array.isArray(config.args));
 }
 for (const file of ['codex.local.toml', 'codex.npx.toml', 'codex.remote.toml']) assert.match(await readFile(join(root, 'examples', file), 'utf8'), /\[mcp_servers\.thinkingmodels\]/);
-assert.equal(catalog.packages.length, 3);
+assert.deepEqual(catalog.packages.map(pkg => pkg.slug), [
+  'thinkingmodels-problem-framing', 'thinkingmodels-decision-validation',
+  'thinkingmodels-learning-reflection', 'thinkingmodels-rule-governance',
+]);
 const cli = await lstat(join(root, pkg.bin['thinkingmodels-mcp']));
 assert(cli.isFile());
-console.log(`Release check passed: ${count} text files, 3 Skills, pinned SDK, local links and config examples.`);
+console.log(`Release check passed: ${count} text files, ${catalog.packages.length} Skills, pinned SDK, local links and config examples.`);
