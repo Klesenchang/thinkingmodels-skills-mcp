@@ -1,14 +1,15 @@
 # ThinkingModels Skills
 
-三个可独立使用的思考工作流，支持 Codex 与 Claude Code 的 `SKILL.md` 目录约定。安装后由宿主读取指令，不是需要单独启动的后台服务。使用用户当前的语言回应。
+四个可独立使用的思考与项目治理工作流，支持 Codex 与 Claude Code 的 `SKILL.md` 目录约定。安装后由宿主读取指令，不是需要单独启动的后台服务。使用用户当前的语言回应。
 
 | Skill / slug | 用途 | 版本 | 下载 |
 | --- | --- | --- | --- |
 | 问题拆解 / `thinkingmodels-problem-framing` | 区分事实、假设与约束，形成可验证的问题 | 1.0.1 | [ZIP](dist/thinkingmodels-problem-framing-1.0.1.zip) |
 | 决策与验证 / `thinkingmodels-decision-validation` | 按用户的标准比较方案，为关键假设设计验证 | 1.0.1 | [ZIP](dist/thinkingmodels-decision-validation-1.0.1.zip) |
 | 学习与复盘 / `thinkingmodels-learning-reflection` | 用真实案例检验模型，区分当时信息与事后反馈 | 1.0.1 | [ZIP](dist/thinkingmodels-learning-reflection-1.0.1.zip) |
+| thinkingmodels 规则治理 / `thinkingmodels-rule-governance` | 把反馈整理为可验收需求与有证据的候选规则，核查范围、权限、回归和恢复 | 0.1.0 | [ZIP](dist/thinkingmodels-rule-governance-0.1.0.zip) |
 
-`catalog.json` 包含 slug、中英文名称、图标、标签、描述、版本、许可、ZIP 的 SHA-256 和 SkillHub 发布记录。分类与目录内容延续现有版本；SkillHub 当前状态可能变化，请以对应平台详情页为准。
+`catalog.json` 包含 slug、中英文名称、可选图标、标签、描述、版本、许可、ZIP 的 SHA-256 和 SkillHub 发布记录。分类与目录内容延续现有版本；SkillHub 当前状态可能变化，请以对应平台详情页为准。规则治理只提供流程指引，不自带自动执行、调度或自动学习系统，也不改变宿主权限。
 
 ## 前置条件
 
@@ -28,13 +29,13 @@
 | Codex | `<project>/.agents/skills/<slug>/` | `$CODEX_HOME/skills/<slug>/`，未设置时为 `~/.codex/skills/<slug>/` |
 | Claude Code | `<project>/.claude/skills/<slug>/` | `~/.claude/skills/<slug>/` |
 
-已有同名目录时停止安装，先由你决定是否备份或改用另一作用域，不要将两个版本混在一起。ZIP 根目录包含 `SKILL.md`、`agents/`、`assets/`、`references/`、`skill.json`、`INSTALL.md`、`LICENSE.txt`。
+已有同名目录时停止安装，先由你决定是否备份或改用另一作用域，不要将两个版本混在一起。前三项 1.0.1 ZIP 根目录包含 `SKILL.md`、`agents/`、`assets/`、`references/`、`skill.json`、`INSTALL.md`、`LICENSE.txt`。规则治理 0.1.0 保留审核原件，只有 `SKILL.md`、`references/governance.md`、`references/synthetic-cases.md` 和 `LICENSE`，不额外生成图标、宿主配置或安装说明。
 
 ## 方式二：复制源代码目录
 
-克隆本仓库后，将 `skills/<slug>/` **整个目录** 复制到上表的 `skills/` 下，例如将 `skills/thinkingmodels-problem-framing/` 复制为 `<project>/.agents/skills/thinkingmodels-problem-framing/`。保留 `agents/`、`assets/`、`references/` 和 `LICENSE`；无需复制 `catalog.json`、`dist/` 或 `build.mjs`。
+克隆本仓库后，将 `skills/<slug>/` 的技能内容复制到上表的 `skills/` 下，例如将 `skills/thinkingmodels-problem-framing/` 复制为 `<project>/.agents/skills/thinkingmodels-problem-framing/`。前三项保留 `agents/`、`assets/`、`references/` 和 `LICENSE`。规则治理只复制上述四个审核文件，其 `release.zip` 是构建核验输入，无需安装；本地安装脚本会排除它。无需复制 `catalog.json`、`dist/` 或 `build.mjs`。
 
-源目录与 ZIP 中的 `SKILL.md`、引用文件和 SVG 图标内容相同。ZIP 附带分发元数据与安装说明，许可文件因市场格式要求命名为 `LICENSE.txt`。
+源目录与 ZIP 中的 `SKILL.md`、引用文件和已有 SVG 图标内容相同。前三项 ZIP 附带分发元数据与安装说明，许可文件因市场格式要求命名为 `LICENSE.txt`；规则治理保留原 `LICENSE` 名称和四文件结构。
 
 ## 方式三：使用本地 Node 安装脚本
 
@@ -52,6 +53,9 @@ node scripts/install-skill.mjs --skill thinkingmodels-learning-reflection --host
 
 # Claude Code：个人作用域。
 node scripts/install-skill.mjs --skill thinkingmodels-learning-reflection --host claude --scope user
+
+# 规则治理：仅当前项目。
+node scripts/install-skill.mjs --skill thinkingmodels-rule-governance --host codex --scope project --project /absolute/path/to/project
 ```
 
 Windows 项目路径可写成 `--project "C:\Users\you\project"`。设置自定义 `CODEX_HOME` 时使用绝对路径，其父目录须已存在。
@@ -60,7 +64,7 @@ Windows 项目路径可写成 `--project "C:\Users\you\project"`。设置自定�
 
 ## 给 Codex / Claude Code 的安装提示词
 
-先将本仓库克隆到本地，再把下面内容交给当前宿主；替换两个绝对路径和选定的 slug。不要把三个 Skill 都装上作为试用前提。
+先将本仓库克隆到本地，再把下面内容交给当前宿主；替换两个绝对路径和选定的 slug。不要把所有 Skill 都装上作为试用前提。
 
 ```text
 请从 /absolute/path/to/thinkingmodels-skills-mcp 安装
@@ -101,9 +105,16 @@ Claude Code 用 <project>/.claude/skills/thinkingmodels-problem-framing/。
 试用用户很多，但付费转化很低；先找出要核对的一项信息，不急着改功能。
 ```
 
-Claude Code 可以直接要求“使用 thinkingmodels-problem-framing 帮我澄清……”；是否能通过名称自动发现，取决于当前宿主版本与会话加载情况。每个目录的 `references/worked-example.md` 都给出完整试用案例。
+Claude Code 可以直接要求“使用 thinkingmodels-problem-framing 帮我澄清……”；是否能通过名称自动发现，取决于当前宿主版本与会话加载情况。前三项目录的 `references/worked-example.md` 给出试用案例；规则治理使用 `references/synthetic-cases.md` 中的合成验收案例，不把阅读案例当成真实系统验证。
 
-这些 Skill 无需远程服务即可组织问题、比较方案和复盘。只有任务确实需要核对模型知识，且你已经另行配置工具时，才使用 `references/knowledge-access.md` 中的可选访问方式。MCP 接入见[仓库安装与配置说明](../README.md)，安装 Skill 不会自动启用它。
+这些 Skill 无需远程服务即可读取工作流指引。前三项只有任务确实需要核对模型知识，且你已经另行配置工具时，才使用 `references/knowledge-access.md` 中的可选访问方式。规则治理不自带知识查询或系统执行器。MCP 接入见[仓库安装与配置说明](../README.md)，安装 Skill 不会自动启用它。
+
+规则治理可明确这样调用：
+
+```text
+使用 $thinkingmodels-rule-governance 将下面的合成反馈整理成候选需求与验收条件，
+区分事实、推断和缺失证据；只做评审，不执行发布或修改生效规则。
+```
 
 ## 构建与验证
 
@@ -114,7 +125,7 @@ node skills/build.mjs
 node --test test/skills.test.mjs
 ```
 
-构建仅打包白名单文件，固定时间与文件权限，用 Info-ZIP 生成 ZIP 并记录 SHA-256。现有三个 1.0.1 ZIP 的字节与已分发版本保持一致；测试在临时目录连续构建两次，核对条目、元数据、引用及原始 hash，不会安装到你的真实个人技能目录。
+前三项构建仅打包白名单文件，固定时间与文件权限，用 Info-ZIP 生成 ZIP 并记录 SHA-256。现有三个 1.0.1 ZIP 的字节与已分发版本保持一致；规则治理使用 `reviewed-archive` 分发模式，核验 `release.zip` 的 CRC、精确四文件白名单、正文与固定 SHA 后复制到 dist，不重封装。测试在临时目录连续构建两次，核对条目、元数据、引用及原始 hash，不会安装到你的真实个人技能目录。
 
 验证覆盖文件结构、ZIP 完整性与哈希、两个宿主的项目路径、隔离的 `CODEX_HOME` 路径、参数校验、重复安装和符号链接拒绝。未将这些文件安装到维护者的真实全局目录，也没有据此宣称已在 Codex / Claude Code 中完成真实模型触发或证明模型回答质量。
 

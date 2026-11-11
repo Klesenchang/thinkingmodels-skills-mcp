@@ -15,6 +15,7 @@ const expectedHashes = {
   'thinkingmodels-problem-framing': 'd860bae582dd12eb5c2c836a3e726ab025a525a2daa32340e1bc915ba956b092',
   'thinkingmodels-decision-validation': '351e3ce9bb8eb5649646d08f45523f911d077d3b421449dc49756c3ad7b006a0',
   'thinkingmodels-learning-reflection': '34802ff4025434b34b6f7b5696b55b43e4571fcecb8fcec4b46daee5531944ce',
+  'thinkingmodels-rule-governance': '830e2c8548623eb863a494637a01bea8cbb61481c9e265f48dd6d801f4e69199',
 };
 const expectedEntries = [
   'INSTALL.md', 'LICENSE.txt', 'SKILL.md', 'agents/openai.yaml', 'assets/icon.svg',
@@ -71,7 +72,9 @@ async function regularFiles(directory, prefix = '') {
 test('three Skills retain their published metadata, references, archive entries and SHA-256', async () => {
   assert.deepEqual(catalog.packages.map(pkg => pkg.slug), skillSlugs);
   assert.deepEqual(catalog.hosts, ['Codex', 'Claude Code']);
-  for (const pkg of catalog.packages) {
+  const originalPackages = catalog.packages.filter(pkg => pkg.slug !== 'thinkingmodels-rule-governance');
+  assert.equal(originalPackages.length, 3);
+  for (const pkg of originalPackages) {
     assert.equal(pkg.version, '1.0.1');
     assert.equal(pkg.license, 'CC0-1.0');
     assert.ok(pkg.name.zh && pkg.name.en && pkg.description.zh && pkg.description.en);
@@ -118,6 +121,42 @@ test('three Skills retain their published metadata, references, archive entries 
   }
 });
 
+test('governance retains its reviewed four-file archive and instruction-only metadata', async () => {
+  const pkg = catalog.packages.find(pkg => pkg.slug === 'thinkingmodels-rule-governance');
+  assert.equal(pkg.version, '0.1.0');
+  assert.equal(pkg.license, 'CC0-1.0');
+  assert.equal(pkg.distribution, 'reviewed-archive');
+  assert.equal(pkg.icon, null);
+  assert.equal(pkg.skillhub.url, 'https://skillhub.cn/skills/indiv-klesen/thinkingmodels-rule-governance');
+  const source = join(root, 'skills', pkg.slug);
+  const expected = {
+    'SKILL.md': '1659bd80d32fed1eac6c8fa2d098481b9f93dba39620a4016dd550a683f5256a',
+    'references/governance.md': '77b06eae25a9977be6f5e314120a4aed92f7617e5b7440439263033cd624f540',
+    'references/synthetic-cases.md': '404e630074f67d63db86801ee338ca21e455114f1da31587d49c2c0058c098af',
+    LICENSE: '5f66a09ce702e1346dac8aff9d1c200838765600b9307c960cd5d238c3b37d11',
+  };
+  assert.deepEqual(await regularFiles(source), [...Object.keys(expected), 'release.zip'].sort());
+  const archive = join(root, 'skills', pkg.zip);
+  const bytes = await readFile(archive);
+  assert.equal(bytes.length, 14401);
+  assert.equal(pkg.bytes, bytes.length);
+  assert.equal(sha256(bytes), expectedHashes[pkg.slug]);
+  assert.equal(pkg.sha256, expectedHashes[pkg.slug]);
+  assert.deepEqual(await readFile(join(source, 'release.zip')), bytes);
+  assert.deepEqual(unzip(archive, '-Z1').trim().split('\n').sort(), Object.keys(expected).sort());
+  unzip(archive, '-tq');
+  for (const [name, hash] of Object.entries(expected)) {
+    const content = await readFile(join(source, name));
+    assert.equal(sha256(content), hash);
+    const archived = run('unzip', ['-p', archive, name], { encoding: null });
+    assert.equal(archived.status, 0);
+    assert.deepEqual(archived.stdout, content);
+  }
+  const skill = await readFile(join(source, 'SKILL.md'), 'utf8');
+  assert.match(skill, /license: CC0-1\.0/);
+  assert.match(skill, /不自带自动化执行系统/);
+});
+
 test('consecutive builds use only local sources and preserve published ZIP bytes', async t => {
   const directory = await temporary(t);
   const skills = join(directory, 'skills');
@@ -134,6 +173,37 @@ test('consecutive builds use only local sources and preserve published ZIP bytes
   }
 });
 
+test('reviewed archive build rejects source, archive and metadata tampering without following output links', async t => {
+  const parent = await temporary(t);
+  const guard = await forbidNetwork(parent);
+  const cases = [
+    ['unexpected-source', async (skills, source) => writeFile(join(source, 'extra.txt'), 'synthetic unexpected file')],
+    ['changed-source', async (skills, source) => writeFile(join(source, 'SKILL.md'), 'synthetic changed content')],
+    ['changed-archive', async (skills, source) => writeFile(join(source, 'release.zip'), 'synthetic invalid ZIP')],
+    ['wrong-license', async skills => {
+      const path = join(skills, 'catalog.json');
+      const changed = JSON.parse(await readFile(path, 'utf8'));
+      changed.packages.find(pkg => pkg.slug === 'thinkingmodels-rule-governance').license = 'MIT';
+      await writeFile(path, JSON.stringify(changed));
+    }],
+    ['linked-output', async skills => {
+      const path = join(skills, 'dist', 'thinkingmodels-rule-governance-0.1.0.zip');
+      const outside = join(parent, 'synthetic-outside.zip');
+      await writeFile(outside, 'untouched outside bytes');
+      await rm(path);
+      await symlink(outside, path);
+    }],
+  ];
+  for (const [name, mutate] of cases) {
+    const skills = join(parent, name, 'skills');
+    await cp(join(root, 'skills'), skills, { recursive: true });
+    await mutate(skills, join(skills, 'thinkingmodels-rule-governance'));
+    const result = run(process.execPath, [...guard, join(skills, 'build.mjs')]);
+    assert.notEqual(result.status, 0, `${name} must fail`);
+  }
+  assert.equal(await readFile(join(parent, 'synthetic-outside.zip'), 'utf8'), 'untouched outside bytes');
+});
+
 test('project installer copies each Skill to the correct host without network or MCP edits', async t => {
   const directory = await temporary(t);
   const guard = await forbidNetwork(directory);
@@ -145,7 +215,7 @@ test('project installer copies each Skill to the correct host without network or
       assert.equal(result.status, 0, result.stderr);
       const target = join(project, host === 'codex' ? '.agents' : '.claude', 'skills', skill);
       const source = join(root, 'skills', skill);
-      const files = await regularFiles(source);
+      const files = (await regularFiles(source)).filter(name => !(skill === 'thinkingmodels-rule-governance' && name === 'release.zip'));
       assert.deepEqual(await regularFiles(target), files);
       for (const name of files) assert.deepEqual(await readFile(join(target, name)), await readFile(join(source, name)));
       assert.deepEqual(await readdir(project), [host === 'codex' ? '.agents' : '.claude']);

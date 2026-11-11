@@ -1,4 +1,4 @@
-import { chmod, copyFile, mkdir, mkdtemp, readFile, readdir, rm, stat, utimes, writeFile } from 'node:fs/promises';
+import { chmod, copyFile, lstat, mkdir, mkdtemp, readFile, readdir, rm, stat, utimes, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -24,10 +24,65 @@ async function sourceFiles(dir, prefix = '') {
   return result.sort();
 }
 
+// Preserve the reviewed instruction-only release byte for byte. It has no
+// generated icon, host metadata or installer, unlike the original three Skills.
+const reviewedSlug = 'thinkingmodels-rule-governance';
+const reviewedSHA256 = '830e2c8548623eb863a494637a01bea8cbb61481c9e265f48dd6d801f4e69199';
+const reviewedEntries = ['LICENSE', 'SKILL.md', 'references/governance.md', 'references/synthetic-cases.md'];
+async function reviewedArchive(pkg) {
+  if (pkg.slug !== reviewedSlug || pkg.version !== '0.1.0' || pkg.license !== 'CC0-1.0' || pkg.icon !== null) throw new Error('Unapproved reviewed release metadata');
+  const source = join(root, pkg.slug);
+  const archive = join(source, 'release.zip');
+  async function entries(dir, prefix = '') {
+    const found = [];
+    for (const item of await readdir(dir, { withFileTypes: true })) {
+      const name = prefix + item.name;
+      if (item.isSymbolicLink()) throw new Error(`Symlink forbidden: ${name}`);
+      if (item.isDirectory()) found.push(...await entries(join(dir, item.name), name + '/'));
+      else if (item.isFile()) found.push(name);
+      else throw new Error(`Unsupported reviewed source: ${name}`);
+    }
+    return found.sort();
+  }
+  if (JSON.stringify(await entries(source)) !== JSON.stringify([...reviewedEntries, 'release.zip'].sort())) throw new Error('Reviewed source allowlist mismatch');
+  if (!(await lstat(archive)).isFile()) throw new Error('Reviewed archive must be a regular file');
+  const bytes = await readFile(archive);
+  const digest = createHash('sha256').update(bytes).digest('hex');
+  if (bytes.length !== 14401 || digest !== reviewedSHA256 || pkg.bytes !== bytes.length || pkg.sha256 !== digest) throw new Error('Reviewed archive fingerprint mismatch');
+  const archived = execFileSync('/usr/bin/unzip', ['-Z1', archive], { encoding: 'utf8', maxBuffer: 65536 }).trim().split('\n').sort();
+  if (JSON.stringify(archived) !== JSON.stringify(reviewedEntries)) throw new Error('Reviewed archive allowlist mismatch');
+  execFileSync('/usr/bin/unzip', ['-tq', archive]);
+  let totalExtracted = 0;
+  for (const name of reviewedEntries) {
+    const sourcePath = join(source, name);
+    if ((await lstat(sourcePath)).size > 32768) throw new Error(`Reviewed source too large: ${name}`);
+    const contents = execFileSync('/usr/bin/unzip', ['-p', archive, name], { maxBuffer: 32768 });
+    totalExtracted += contents.length;
+    if (totalExtracted > 65536) throw new Error('Reviewed archive exceeds extraction budget');
+    if (!contents.equals(await readFile(sourcePath))) throw new Error(`Reviewed content mismatch: ${name}`);
+  }
+  const skill = await readFile(join(source, 'SKILL.md'), 'utf8');
+  const metadata = skill.match(/^---\n([\s\S]*?)\n---/)[1];
+  for (const [key, value] of [['slug', pkg.slug], ['name', pkg.slug], ['version', pkg.version], ['license', pkg.license], ['displayName', pkg.name.zh]]) {
+    if (!metadata.split('\n').includes(`${key}: ${value}`)) throw new Error(`Reviewed metadata mismatch: ${key}`);
+  }
+  const output = join(root, pkg.zip);
+  try {
+    const target = await lstat(output);
+    if (!target.isFile() || target.isSymbolicLink()) throw new Error('Reviewed ZIP output must be a regular file');
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+  }
+  await copyFile(archive, output);
+  console.log(`${pkg.slug}@${pkg.version}: reviewed ${archived.length} files, preserved ${bytes.length} bytes, sha256 ${digest}`);
+}
+
 await mkdir(join(root, 'dist'), { recursive: true });
 for (const pkg of catalog.packages) {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(pkg.slug) || !/^\d+\.\d+\.\d+$/.test(pkg.version)) throw new Error('Invalid slug/version');
-  if (pkg.zip !== `dist/${pkg.slug}-${pkg.version}.zip` || pkg.icon !== `${pkg.slug}/assets/icon.svg`) throw new Error('Invalid artifact path');
+  if (pkg.zip !== `dist/${pkg.slug}-${pkg.version}.zip`) throw new Error('Invalid artifact path');
+  if (pkg.distribution === 'reviewed-archive') { await reviewedArchive(pkg); continue; }
+  if (pkg.icon !== `${pkg.slug}/assets/icon.svg`) throw new Error('Invalid icon path');
   const source = join(root, pkg.slug);
   const files = await sourceFiles(source);
   for (const file of required) if (!files.includes(file)) throw new Error(`Missing ${pkg.slug}/${file}`);

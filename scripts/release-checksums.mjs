@@ -18,4 +18,4 @@ for (const entry of catalog.packages) {
 }
 const output = join(skills, 'dist/SHA256SUMS');
 await writeFile(output, checksums.join('\n') + '\n');
-console.log('Wrote skills/dist/SHA256SUMS for three verified Skill ZIPs.');
+console.log(`Wrote skills/dist/SHA256SUMS for ${catalog.packages.length} verified Skill ZIPs.`);

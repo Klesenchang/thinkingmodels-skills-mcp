@@ -1,6 +1,8 @@
 # ThinkingModels · Skill 与 MCP
 
-认知脚手架的三个离线 Skill，以及五个公共知识工具的 MCP 服务。Skill 帮助你拆解问题、比较选择和复盘行动；MCP 按需提供模型、关系与来源查询。
+认知脚手架的四个离线 Skill，以及五个公共知识工具的 MCP 服务。Skill 帮助你拆解问题、比较选择、复盘行动和审查项目规则；MCP 按需提供模型、关系与来源查询。
+
+规则治理技能提供需求评审与规则治理流程指引，不自带自动化执行、调度或自动学习系统，也不授予操作权限。
 
 - **Skill** 是给 Codex / Claude Code 阅读的指令文件，安装后由宿主使用，无须启动服务。
 - **MCP** 是可独立启动的 Node.js 服务，支持本地 stdio 和自托管 Streamable HTTP。默认读取 `https://thinkingmodels.site` 的公开 REST API，需要联网。
@@ -24,7 +26,7 @@ npm ci --ignore-scripts
 npm run verify
 ```
 
-`verify` 构建三个 ZIP，执行独立测试，并检查发布文件。测试使用本地固定数据，不依赖生产数据库或云服务凭据。
+`verify` 重建三个既有 ZIP、核验规则治理的原审核 ZIP，执行独立测试，并检查发布文件。测试使用本地固定数据，不依赖生产数据库或云服务凭据。
 
 ### 安装一个 Skill
 
@@ -39,8 +41,9 @@ node scripts/install-skill.mjs --skill thinkingmodels-problem-framing --host cod
 | [问题拆解](skills/thinkingmodels-problem-framing/SKILL.md) | 区分事实、假设和约束，把模糊困扰改写成可验证的问题 | 1.0.1 |
 | [决策与验证](skills/thinkingmodels-decision-validation/SKILL.md) | 按自己的标准比较方案，找出取舍，为关键假设设计小规模验证 | 1.0.1 |
 | [学习与复盘](skills/thinkingmodels-learning-reflection/SKILL.md) | 把模型放进具体案例，检查适用边界，将反馈变成下一步行动 | 1.0.1 |
+| [thinkingmodels 规则治理](skills/thinkingmodels-rule-governance/SKILL.md) | 将反馈整理为可验收需求与有证据的候选规则，核查范围、权限、回归和恢复目标 | 0.1.0 |
 
-ZIP、版本、名称、图标、标签、双语描述、SkillHub 链接和 SHA-256 记录在 [catalog.json](skills/catalog.json)。可从 [GitHub Releases](https://github.com/Klesenchang/thinkingmodels-skills-mcp/releases) 下载三个 ZIP 及校验清单。Skill 版本与本仓库集成版本独立。
+ZIP、版本、名称、可选图标、标签、双语描述、SkillHub 链接和 SHA-256 记录在 [catalog.json](skills/catalog.json)。四个 ZIP 及校验清单见 [skills/dist](skills/dist/)，已发布版本的附件见 [GitHub Releases](https://github.com/Klesenchang/thinkingmodels-skills-mcp/releases)。Skill 版本与本仓库集成版本独立；规则治理包没有图标或宿主专属配置，保留审核原件。
 
 ### 启动本地 MCP（stdio）
 
@@ -83,7 +86,7 @@ npm run start:http
 ## 仓库结构
 
 ```text
-skills/                  三个原始 Skill、图标、引用、catalog 与 ZIP 构建
+skills/                  四个 Skill、引用、可选图标、catalog 与 ZIP 核验/构建
 mcp/src/                 公共 API 适配、五工具、stdio / HTTP 服务
 mcp/test/                本地 fixture 与协议/错误处理测试
 scripts/                 Skill 安装、发布校验、远程只读 smoke
